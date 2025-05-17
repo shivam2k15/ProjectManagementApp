@@ -14,12 +14,12 @@ export default $config({
   async run() {
     // new sst.aws.Nextjs("MyWeb");
     const web = new sst.aws.Nextjs("MyWeb", {
-      path: ".", // root of your Next.js app
+      path: ".", 
       buildCommand: "npm run sst:build",
     });
 
     return {
-      url: web.url, // this will be a working web app link
+      url: web.url,
     };
   },
 });

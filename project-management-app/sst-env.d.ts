@@ -5,18 +5,8 @@
 
 declare module "sst" {
   export interface Resource {
-    "Client": {
-      "name": string
-      "type": "sst.aws.Function"
-      "url": string
-    }
     "MyWeb": {
       "type": "sst.aws.Nextjs"
-      "url": string
-    }
-    "Trpc": {
-      "name": string
-      "type": "sst.aws.Function"
       "url": string
     }
   }
