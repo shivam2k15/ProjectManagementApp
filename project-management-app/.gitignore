@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+node_modules
 /.pnp
 .pnp.js
 
@@ -44,3 +45,10 @@ yarn-error.log*
 
 # idea files
 .idea
+
+# sst
+.sst
+
+
+# open-next
+.open-next

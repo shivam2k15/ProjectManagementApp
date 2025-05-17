@@ -6,6 +6,7 @@ import { Geist } from "next/font/google";
 import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
+import Layout from "~/components/layout";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -18,7 +19,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <div className={geist.className}>
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </div>
     </SessionProvider>
   );

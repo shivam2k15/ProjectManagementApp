@@ -7,11 +7,11 @@ const compat = new FlatCompat({
 
 export default tseslint.config(
   {
-    ignores: [".next"],
+    ignores: [".next", ".sst", "**/.sst/**"],
   },
   ...compat.extends("next/core-web-vitals"),
   {
-    files: ["**/*.ts", "**/*.tsx"],
+    files: ["**/*.ts", "**/*.tsx", "*.ts"],
     extends: [
       ...tseslint.configs.recommended,
       ...tseslint.configs.recommendedTypeChecked,
@@ -41,6 +41,8 @@ export default tseslint.config(
     },
     languageOptions: {
       parserOptions: {
+        // project: './tsconfig.json',
+        tsconfigRootDir: process.cwd(),
         projectService: true,
       },
     },
