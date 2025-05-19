@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
-import { signIn } from "next-auth/react";
+import { api } from "~/utils/api";
 
-const UserRegisterForm = () => {
+type RegisterProps = {
+    setIsRegister: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const UserRegisterForm = ({ setIsRegister }: RegisterProps) => {
+    const { mutate, error } = api.user.create.useMutation();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -55,25 +60,21 @@ const UserRegisterForm = () => {
         }
 
         setIsSubmitting(true);
-        setRegistrationError('');
+        setRegistrationError(null);
 
         try {
-            // Simulate API call (replace with your actual API logic)
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-
-            // Simulate successful registration
-            if (formData.email === 'test@example.com') {
-                throw new Error('Email address is already taken.');
-            }
-
-            setRegistrationSuccess(true);
-            setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+            mutate({ name: formData.name, email: formData.email, password: formData.password }, {
+                onSuccess: () => {
+                    setRegistrationSuccess(true);
+                    setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+                },
+                onError: () => {
+                    setIsSubmitting(false);
+                }
+            });
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Registration failed. Please try again.';
             setRegistrationError(errorMessage);
-
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -88,7 +89,7 @@ const UserRegisterForm = () => {
                         Thank you for registering. Proceed to login.
                     </p>
                     <button
-                        onClick={() => void signIn()}
+                        onClick={() => void setIsRegister(false)}
                         className="cursor-pointer bg-gray-600 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-200"
                     >
                         Login
@@ -121,6 +122,11 @@ const UserRegisterForm = () => {
                             value={formData.name}
                             onChange={handleChange}
                         />
+                        {error?.data?.zodError?.fieldErrors.name && (
+                            <span className="mb-8 text-red-500">
+                                {error.data.zodError.fieldErrors.name}
+                            </span>
+                        )}
                     </div>
                     <div>
                         <label htmlFor="email" className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
@@ -135,6 +141,11 @@ const UserRegisterForm = () => {
                             value={formData.email}
                             onChange={handleChange}
                         />
+                        {error?.data?.zodError?.fieldErrors.email && (
+                            <span className="mb-8 text-red-500">
+                                {error.data.zodError.fieldErrors.email}
+                            </span>
+                        )}
                     </div>
                     <div>
                         <label htmlFor="password" className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
@@ -165,8 +176,8 @@ const UserRegisterForm = () => {
                         />
                     </div>
 
-                    {registrationError && (
-                        <p className="text-red-500 dark:text-red-400 text-sm">{registrationError}</p>
+                    {(registrationError ?? error?.message) && (
+                        <p className="text-red-500 dark:text-red-400 text-sm">{registrationError ?? error?.message}</p>
                     )}
 
                     <button
@@ -183,14 +194,14 @@ const UserRegisterForm = () => {
                     Already Registered!
                     <button
                         className="cursor-pointer px-1 py-3 font-semibold text-white no-underline transition hover:text-white/20"
-                        onClick={() => void signIn()}
+                        onClick={() => void setIsRegister(false)}
                     >
                         Login
                     </button>
                     Here.
                 </p>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

@@ -6,6 +6,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { TRPCError } from "@trpc/server";
 
 export const userRouter = createTRPCRouter({
   create: publicProcedure
@@ -17,14 +18,24 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const { name, email, password } = input;
+      const userExists = await ctx.db.user.findFirst({
+        where: { email },
+      });
+      if (userExists) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Email already exists!",
+        });
+      }
       const hashedPassword = await bcrypt.hash(
-        input.password,
+        password,
         await bcrypt.genSalt(10),
       );
       return ctx.db.user.create({
         data: {
-          name: input.name,
-          email: input.email,
+          name,
+          email,
           password: hashedPassword,
         },
       });

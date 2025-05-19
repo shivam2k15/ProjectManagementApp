@@ -27,7 +27,6 @@ export const authOptions: NextAuthOptions = {
         const user = await db.user.findUnique({
           where: { email: credentials?.email },
         });
-
         if (
           !user ||
           !(await bcrypt.compare(credentials!.password, user.password!))
@@ -53,6 +52,10 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {  
+      return url.startsWith(baseUrl) ? url : baseUrl;
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
+
 };
